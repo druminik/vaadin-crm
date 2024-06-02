@@ -1,9 +1,10 @@
 package com.example.application.views.list;
 
-import java.util.Collections;
+import org.springframework.context.annotation.Scope;
 
 import com.example.application.data.Contact;
 import com.example.application.services.CrmService;
+import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -15,14 +16,20 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
+import jakarta.annotation.security.PermitAll;
+
+@org.springframework.stereotype.Component
+@Scope("prototype")
+@PermitAll
 @PageTitle("Contacts | Customer CRM")
-@Route(value = "")
+@Route(value = "", layout = MainLayout.class)
 @RouteAlias(value = "")
 public class ListView extends VerticalLayout {
 
   Grid<Contact> grid = new Grid<>(Contact.class);
   TextField filterText = new TextField();
-  private ContactForm contactForm;
+  ContactForm contactForm;
+
   private CrmService service;
 
   public ListView(CrmService crmService) {
