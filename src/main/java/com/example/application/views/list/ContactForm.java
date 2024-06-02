@@ -1,22 +1,23 @@
 package com.example.application.views.list;
 
-import java.text.Bidi;
 import java.util.List;
 
 import com.example.application.data.Company;
 import com.example.application.data.Contact;
 import com.example.application.data.Status;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.charts.model.Bottom;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.shared.Registration;
 
 public class ContactForm extends FormLayout {
   TextField firstName = new TextField("First Name");
@@ -43,7 +44,7 @@ public class ContactForm extends FormLayout {
     add(firstName, lastName, email, status, company, createButtonsLayout());
   }
 
-  public void setContact(Contact contact){
+  public void setContact(Contact contact) {
     binder.setBean(contact);
   }
 
@@ -55,8 +56,68 @@ public class ContactForm extends FormLayout {
     save.addClickShortcut(Key.ENTER);
     close.addClickShortcut(Key.ESCAPE);
 
+    save.addClickListener(event -> validateAndSave());
+    close.addClickListener(event -> fireEvent(new CloseEvent(this)));
+    delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean())));
     return new HorizontalLayout(save, delete, close);
   }
 
+  private void validateAndSave() {
+    if (binder.isValid()) {
+      fireEvent(new SaveEvent(this, binder.getBean()));
+    }
+  }
+
+  public Registration addDeleteListener(ComponentEventListener<DeleteEvent> listener) {
+    return addListener(DeleteEvent.class, listener);
+  }
+
+  public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
+    return addListener(SaveEvent.class, listener);
+  }
+
+  public Registration addCloseListener(ComponentEventListener<CloseEvent> listener) {
+    return addListener(CloseEvent.class, listener);
+  }
+
+  /**
+   * Inner class for Events
+   */
+  public static abstract class ContactFormEvent extends ComponentEvent<ContactForm> {
+
+    private Contact contact;
+
+    protected ContactFormEvent(ContactForm source, Contact contact) {
+      super(source, false);
+      this.contact = contact;
+
+    }
+
+    public Contact getContact() {
+      return contact;
+    }
+  }
+
+  public static class SaveEvent extends ContactFormEvent {
+
+    SaveEvent(ContactForm source, Contact contact) {
+      super(source, contact);
+    }
+  }
+
+  public static class DeleteEvent extends ContactFormEvent {
+
+    DeleteEvent(ContactForm source, Contact contact) {
+      super(source, contact);
+    }
+  }
+
+  public static class CloseEvent extends ContactFormEvent {
+
+    CloseEvent(ContactForm source) {
+      super(source, null);
+    }
+
+  }
 
 }

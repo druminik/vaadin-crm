@@ -33,6 +33,12 @@ public class ListView extends VerticalLayout {
     configureForm();
     add(getToolbar(), getContents());
     updateList();
+    closeEditor();
+  }
+
+  private void closeEditor() {
+    contactForm.setContact(null);
+    contactForm.setVisible(false);
   }
 
   private Component getContents() {
@@ -47,6 +53,22 @@ public class ListView extends VerticalLayout {
   private void configureForm() {
     contactForm = new ContactForm(service.findAllCompanys(), service.findAllStatus());
     contactForm.setWidth("25em");
+
+    contactForm.addSaveListener(this::saveContact);
+    contactForm.addDeleteListener(this::deleteContact);
+    contactForm.addCloseListener(event -> closeEditor());
+  }
+
+  private void saveContact(ContactForm.SaveEvent event) {
+    service.saveContact(event.getContact());
+    updateList();
+    closeEditor();
+  }
+
+  private void deleteContact(ContactForm.DeleteEvent event) {
+    service.deleteContact(event.getContact());
+    updateList();
+    closeEditor();
   }
 
   private void configureGrid() {
@@ -56,6 +78,18 @@ public class ListView extends VerticalLayout {
     grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
     grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
     grid.getColumns().forEach(col -> col.setAutoWidth(true));
+
+    grid.asSingleSelect().addValueChangeListener(event -> editContact(event.getValue()));
+  }
+
+  public void editContact(Contact contact) {
+    if (contact == null) {
+      closeEditor();
+    } else {
+      contactForm.setContact(contact);
+      contactForm.setVisible(true);
+      addClassName("editing");
+    }
   }
 
   private HorizontalLayout getToolbar() {
@@ -64,11 +98,17 @@ public class ListView extends VerticalLayout {
     filterText.setValueChangeMode(ValueChangeMode.LAZY);
     filterText.addValueChangeListener(e -> updateList());
 
-    var button = new Button("Add contact");
+    var addContactButton = new Button("Add contact");
+    addContactButton.addClickListener(event -> addContact());
 
-    var toolbar = new HorizontalLayout(filterText, button);
+    var toolbar = new HorizontalLayout(filterText, addContactButton);
     toolbar.addClassName("toolbar");
     return toolbar;
+  }
+
+  private void addContact() {
+    grid.asSingleSelect().clear();
+    editContact(new Contact());
   }
 
   private void updateList() {
