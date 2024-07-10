@@ -11,68 +11,83 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 public class Contact extends AbstractEntity {
 
-    @NotEmpty
-    private String firstName = "";
+  @NotEmpty
+  private String firstName = "";
 
-    @NotEmpty
-    private String lastName = "";
+  @NotEmpty
+  private String lastName = "";
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    @NotNull
-    @JsonIgnoreProperties({"employees"})
-    private Company company;
+  @ManyToOne
+  @JoinColumn(name = "company_id")
+  @NotNull
+  @JsonIgnoreProperties({ "employees" })
+  private Company company;
 
-    @NotNull
-    @ManyToOne
-    private Status status;
+  @ManyToOne
+  @JoinColumn(name = "address_id")
+  @NotNull
+  @JsonIgnoreProperties({ "contacts" })
+  private Address address;
 
-    @Email
-    @NotEmpty
-    private String email = "";
+  @NotNull
+  @ManyToOne
+  private Status status;
 
-    @Override
-    public String toString() {
-        return firstName + " " + lastName;
-    }
+  @Email
+  @NotEmpty
+  private String email = "";
 
-    public String getFirstName() {
-        return firstName;
-    }
+  @Override
+  public String toString() {
+    return firstName + " " + lastName;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public Company getCompany() {
-        return company;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }
+  public Company getCompany() {
+    return company;
+  }
 
-    public Status getStatus() {
-        return status;
-    }
+  public void setCompany(Company company) {
+    this.company = company;
+  }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+  public Status getStatus() {
+    return status;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public void setStatus(Status status) {
+    this.status = status;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public Address getAddress() {
+    return address;
+  }
+
+  public void setAddress(Address address) {
+    this.address = address;
+  }
+
 }
