@@ -29,7 +29,7 @@ import jakarta.annotation.security.PermitAll;
 @PageTitle("Contacts | Customer CRM")
 @Route(value = "", layout = MainLayout.class)
 @RouteAlias(value = "")
-public class ListView extends VerticalLayout {
+public class ContactView extends VerticalLayout {
 
   Grid<Contact> grid = new Grid<>(Contact.class);
   TextField filterText = new TextField();
@@ -37,7 +37,7 @@ public class ListView extends VerticalLayout {
 
   private CrmService service;
 
-  public ListView(CrmService crmService) {
+  public ContactView(CrmService crmService) {
     this.service = crmService;
     addClassName("list-view");
     setSizeFull();
@@ -87,15 +87,17 @@ public class ListView extends VerticalLayout {
     grid.addClassNames("contact-grid");
     grid.setSizeFull();
     grid.setColumns("firstName", "lastName", "email");
-    Column<Contact> firstNameColumn = grid.getColumnByKey("firstName").setSortable(true);
-    grid.getColumnByKey("lastName").setSortable(true);
+    grid.getColumnByKey("firstName").setSortable(true);
+    Column<Contact> lastNameColumn = grid.getColumnByKey("lastName").setSortable(true);
     grid.getColumnByKey("email").setSortable(true);
 
     grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
     grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
+    grid.addColumn(contact -> contact.getAddress().getStreet()).setHeader("Street");
+    grid.addColumn(contact -> contact.getAddress().getCity()).setHeader("City");
     grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-    grid.sort(Arrays.asList(new GridSortOrder<Contact>(firstNameColumn, SortDirection.ASCENDING)));
+    grid.sort(Arrays.asList(new GridSortOrder<Contact>(lastNameColumn, SortDirection.ASCENDING)));
 
     grid.asSingleSelect().addValueChangeListener(event -> editContact(event.getValue()));
   }

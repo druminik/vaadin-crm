@@ -13,10 +13,10 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 @SpringBootTest
-public class ListViewTest {
+public class ContactViewTest {
 
   @Autowired
-  private ListView listView;
+  private ContactView listView;
 
   @Test
   public void formShownWhenContactSelected() {
