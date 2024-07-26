@@ -16,7 +16,6 @@ public class Property extends AbstractEntity {
 
   @ManyToOne
   @JoinColumn(name = "address_id")
-  @NotNull
   private Address address;
 
   public String getName() {

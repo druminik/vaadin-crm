@@ -107,4 +107,16 @@ public class CrmService {
 
   }
 
+  public void saveAddress(Address address) {
+    addressRepository.save(address);
+  }
+
+  public void deleteAddress(Address address) {
+    addressRepository.delete(address);
+  }
+
+  public List<Address> findAllAddresss(String stringFilter) {
+    return addressRepository.search(stringFilter);
+  }
+
 }
