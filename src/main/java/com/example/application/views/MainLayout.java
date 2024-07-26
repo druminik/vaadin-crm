@@ -3,6 +3,7 @@ package com.example.application.views;
 import com.example.application.security.SecurityService;
 import com.example.application.views.list.CompanyView;
 import com.example.application.views.list.ContactView;
+import com.example.application.views.list.PropertyView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -43,5 +44,6 @@ public class MainLayout extends AppLayout {
   private void createDrawer() {
     addToDrawer(new VerticalLayout(new RouterLink("Contacts", ContactView.class)));
     addToDrawer(new VerticalLayout(new RouterLink("Companies", CompanyView.class)));
+    addToDrawer(new VerticalLayout(new RouterLink("Properties", PropertyView.class)));
   }
 }

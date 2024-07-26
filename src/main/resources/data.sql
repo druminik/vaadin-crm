@@ -76,3 +76,8 @@ INSERT INTO "CONTACT" (ID, VERSION, EMAIL, FIRST_NAME, LAST_NAME, COMPANY_ID, ST
 (58, 1, 'bryan.shaw@ha.ee', 'Bryan', 'Shaw', 9, 1, 68),
 (59, 1, 'essie.adams@iliat.cw', 'Essie', 'Adams', 8, 5, 69),
 (60, 1, 'gary.osborne@do.ga', 'Gary', 'Osborne', 7, 5, 70);
+INSERT INTO "PROPERTY" (ID, VERSION, NAME, ADDRESS_ID) VALUES
+(71, 1, 'Haus 1',61),
+(72, 1, 'Wohnung 1',62),
+(73, 1, 'Tiefgarage',63);
+

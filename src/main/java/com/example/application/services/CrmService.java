@@ -11,8 +11,11 @@ import com.example.application.data.Company;
 import com.example.application.data.CompanyRepository;
 import com.example.application.data.Contact;
 import com.example.application.data.ContactRepository;
+import com.example.application.data.Property;
+import com.example.application.data.PropertyRepository;
 import com.example.application.data.Status;
 import com.example.application.data.StatusRepository;
+import com.vaadin.flow.data.provider.DataProvider;
 
 @Service
 public class CrmService {
@@ -20,13 +23,15 @@ public class CrmService {
   private final ContactRepository contactRepository;
   private final StatusRepository statusRepository;
   private final AddressRepository addressRepository;
+  private final PropertyRepository propertyRepository;
 
   public CrmService(CompanyRepository companyRepository, ContactRepository contactRepository,
-      StatusRepository statusRepository, AddressRepository addressRepository) {
+      StatusRepository statusRepository, AddressRepository addressRepository, PropertyRepository propertyRepository) {
     this.companyRepository = companyRepository;
     this.contactRepository = contactRepository;
     this.statusRepository = statusRepository;
     this.addressRepository = addressRepository;
+    this.propertyRepository = propertyRepository;
   }
 
   public List<Contact> findAllContacts(String stringFilter) {
@@ -83,6 +88,23 @@ public class CrmService {
 
   public List<Address> findAllAddresses() {
     return addressRepository.findAll();
+  }
+
+  public void saveProperty(Property property) {
+    propertyRepository.save(property);
+  }
+
+  public void deleteProperty(Property property) {
+    propertyRepository.delete(property);
+  }
+
+  public List<Property> findAllPropertys(String stringFilter) {
+    if (stringFilter == null || stringFilter.isEmpty()) {
+      return propertyRepository.findAll();
+    } else {
+      return propertyRepository.search(stringFilter);
+    }
+
   }
 
 }
