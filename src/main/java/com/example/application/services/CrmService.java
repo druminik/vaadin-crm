@@ -2,6 +2,7 @@ package com.example.application.services;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import com.example.application.data.Address;
@@ -53,7 +54,27 @@ public class CrmService {
   }
 
   public List<Company> findAllCompanys() {
-    return companyRepository.findAll();
+    return findAllCompanys(null);
+  }
+
+  public List<Company> findAllCompanys(String stringFilter) {
+    if (stringFilter == null || stringFilter.isEmpty()) {
+      return companyRepository.findAll();
+    } else {
+      return companyRepository.search(stringFilter);
+    }
+  }
+
+  public void saveCompany(Company company) {
+    if (company == null) {
+      System.err.println("Company is null");
+      return;
+    }
+    companyRepository.save(company);
+  }
+
+  public void deleteCompany(Company company) {
+    companyRepository.delete(company);
   }
 
   public List<Status> findAllStatus() {
