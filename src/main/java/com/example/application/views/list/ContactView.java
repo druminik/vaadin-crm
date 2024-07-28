@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Scope;
 
+import com.example.application.data.Company;
 import com.example.application.data.Contact;
 import com.example.application.services.CrmService;
 import com.example.application.views.MainLayout;
@@ -12,14 +13,17 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.router.RouterLink;
 
 import jakarta.annotation.security.PermitAll;
 
@@ -92,7 +96,18 @@ public class ContactView extends VerticalLayout {
     grid.getColumnByKey("email").setSortable(true);
 
     grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
-    grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
+
+    grid.addColumn(new ComponentRenderer<Span, Contact>(contact -> {
+      Company company = contact.getCompany();
+      if (company != null) {
+        RouterLink link = new RouterLink(company.getName(), CompanyView.class, String.valueOf(
+            company.getId()));
+        link.getElement().getStyle().set("text-decoration", "none");
+        return new Span(link);
+      } else {
+        return new Span("No company available");
+      }
+    })).setHeader("Company");
     grid.addColumn(contact -> contact.getAddress().getStreet()).setHeader("Street");
     grid.addColumn(contact -> contact.getAddress().getCity()).setHeader("City");
     grid.getColumns().forEach(col -> col.setAutoWidth(true));

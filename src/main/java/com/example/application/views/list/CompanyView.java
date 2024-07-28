@@ -1,26 +1,22 @@
 package com.example.application.views.list;
 
-import java.util.Arrays;
-
 import org.springframework.context.annotation.Scope;
 
 import com.example.application.data.Company;
-import com.example.application.data.Contact;
 import com.example.application.services.CrmService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 
 import jakarta.annotation.security.PermitAll;
 
@@ -28,9 +24,8 @@ import jakarta.annotation.security.PermitAll;
 @Scope("prototype")
 @PermitAll
 @PageTitle("Company | Customer CRM")
-@Route(value = "/company", layout = MainLayout.class)
-@RouteAlias(value = "/company")
-public class CompanyView extends VerticalLayout {
+@Route(value = "company", layout = MainLayout.class)
+public class CompanyView extends VerticalLayout implements HasUrlParameter<String> {
 
   Grid<Company> grid = new Grid<>(Company.class);
   TextField filterText = new TextField();
@@ -125,6 +120,25 @@ public class CompanyView extends VerticalLayout {
 
   private void updateList() {
     grid.setItems(service.findAllCompanys(filterText.getValue()));
+  }
+
+  @Override
+  public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
+    if (parameter == null)
+      return;
+
+    Company company;
+    try {
+      company = service.getCompany(Long.valueOf(parameter));
+    } catch (NumberFormatException e) {
+      e.printStackTrace();
+      return;
+    }
+
+    if (company != null) {
+      this.filterText.setValue(company.getName());
+      updateList();
+    }
   }
 
 }

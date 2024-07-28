@@ -1,8 +1,8 @@
 package com.example.application.services;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import com.example.application.data.Address;
@@ -15,7 +15,6 @@ import com.example.application.data.Property;
 import com.example.application.data.PropertyRepository;
 import com.example.application.data.Status;
 import com.example.application.data.StatusRepository;
-import com.vaadin.flow.data.provider.DataProvider;
 
 @Service
 public class CrmService {
@@ -80,6 +79,13 @@ public class CrmService {
 
   public void deleteCompany(Company company) {
     companyRepository.delete(company);
+  }
+
+  public Company getCompany(Long id) {
+    Optional<Company> company = companyRepository.findById(id);
+    if (company.isPresent())
+      return company.get();
+    return null;
   }
 
   public List<Status> findAllStatus() {
