@@ -23,7 +23,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.router.RouterLink;
 
 import jakarta.annotation.security.PermitAll;
 
@@ -38,53 +37,57 @@ public class ContactView extends VerticalLayout {
   Grid<Contact> grid = new Grid<>(Contact.class);
   TextField filterText = new TextField();
   ContactForm contactForm;
+  CompanyForm companyForm;
 
   private CrmService service;
+  private Company company;
 
   public ContactView(CrmService crmService) {
     this.service = crmService;
     addClassName("list-view");
     setSizeFull();
     configureGrid();
-    configureForm();
+    configureContactForm();
+    configureCompanyForm();
     add(getToolbar(), getContents());
     updateList();
-    closeEditor();
+    closeContactEditor();
   }
 
-  private void closeEditor() {
+  private void closeContactEditor() {
     contactForm.setContact(null);
     contactForm.setVisible(false);
   }
 
   private Component getContents() {
-    var content = new HorizontalLayout(grid, contactForm);
+    var content = new HorizontalLayout(grid, contactForm, companyForm);
     content.setFlexGrow(2, grid);
     content.setFlexGrow(1, contactForm);
+    content.setFlexGrow(1, companyForm);
     content.setClassName("content");
     content.setSizeFull();
     return content;
   }
 
-  private void configureForm() {
+  private void configureContactForm() {
     contactForm = new ContactForm(service.findAllCompanys(), service.findAllStatus());
     contactForm.setWidth("25em");
 
     contactForm.addSaveListener(this::saveContact);
     contactForm.addDeleteListener(this::deleteContact);
-    contactForm.addCloseListener(event -> closeEditor());
+    contactForm.addCloseListener(event -> closeContactEditor());
   }
 
   private void saveContact(ContactForm.SaveEvent event) {
     service.saveContact(event.getContact());
     updateList();
-    closeEditor();
+    closeContactEditor();
   }
 
   private void deleteContact(ContactForm.DeleteEvent event) {
     service.deleteContact(event.getContact());
     updateList();
-    closeEditor();
+    closeContactEditor();
   }
 
   private void configureGrid() {
@@ -96,16 +99,15 @@ public class ContactView extends VerticalLayout {
     grid.getColumnByKey("email").setSortable(true);
 
     grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
-
-    grid.addColumn(new ComponentRenderer<Span, Contact>(contact -> {
-      Company company = contact.getCompany();
-      if (company != null) {
-        RouterLink link = new RouterLink(company.getName(), CompanyView.class, String.valueOf(
-            company.getId()));
-        link.getElement().getStyle().set("text-decoration", "none");
-        return new Span(link);
+    grid.addColumn(new ComponentRenderer<>(contact -> {
+      Company myCompany = contact.getCompany();
+      if (myCompany != null) {
+        Button linkButton = new Button(myCompany.getName());
+        linkButton.getElement().setAttribute("theme", "tertiary"); // Style the button as a link
+        linkButton.addClickListener(event -> editCompany(myCompany));
+        return linkButton;
       } else {
-        return new Span("No company available");
+        return new Span("");
       }
     })).setHeader("Company");
     grid.addColumn(contact -> contact.getAddress().getStreet()).setHeader("Street");
@@ -117,9 +119,9 @@ public class ContactView extends VerticalLayout {
     grid.asSingleSelect().addValueChangeListener(event -> editContact(event.getValue()));
   }
 
-  public void editContact(Contact contact) {
+  private void editContact(Contact contact) {
     if (contact == null) {
-      closeEditor();
+      closeContactEditor();
     } else {
       contactForm.setContact(contact);
       contactForm.setVisible(true);
@@ -148,6 +150,36 @@ public class ContactView extends VerticalLayout {
 
   private void updateList() {
     grid.setItems(service.findAllContacts(filterText.getValue()));
+  }
+
+  private void configureCompanyForm() {
+    companyForm = new CompanyForm();
+    companyForm.setWidth("25em");
+
+    companyForm.addSaveListener(event -> {
+      service.saveCompany(event.getCompany());
+      updateList();
+      closeCompanyEditor();
+    });
+    companyForm.addCloseListener(event -> {
+      closeCompanyEditor();
+    });
+    closeCompanyEditor();
+  }
+
+  private void closeCompanyEditor() {
+    companyForm.setCompany(null);
+    companyForm.setVisible(false);
+  }
+
+  private void editCompany(Company company) {
+    if (company == null) {
+      closeCompanyEditor();
+    } else {
+      companyForm.setCompany(company);
+      companyForm.setVisible(true);
+      addClassName("editing");
+    }
   }
 
 }
