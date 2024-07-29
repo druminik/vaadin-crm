@@ -123,6 +123,7 @@ public class ContactView extends VerticalLayout {
     if (contact == null) {
       closeContactEditor();
     } else {
+      closeCompanyEditor();
       contactForm.setContact(contact);
       contactForm.setVisible(true);
       addClassName("editing");
@@ -176,6 +177,7 @@ public class ContactView extends VerticalLayout {
     if (company == null) {
       closeCompanyEditor();
     } else {
+      closeContactEditor();
       companyForm.setCompany(company);
       companyForm.setVisible(true);
       addClassName("editing");
