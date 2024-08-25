@@ -81,3 +81,8 @@ INSERT INTO "PROPERTY" (ID, VERSION, NAME, ADDRESS_ID) VALUES
 (72, 1, 'Wohnung 1',62),
 (73, 1, 'Tiefgarage',63);
 
+INSERT INTO "PROPERTYOBJECT" (ID, VERSION, NAME, PROPERTY_ID) VALUES
+(81, 1, '3.5 Zimmer Wohnung',71),
+(82, 1, '2.5 Zimmer Wohnung',72),
+(83, 1, '4.5 Zimmer Wohnung',73);
+

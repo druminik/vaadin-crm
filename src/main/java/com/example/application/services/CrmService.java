@@ -12,6 +12,8 @@ import com.example.application.data.CompanyRepository;
 import com.example.application.data.Contact;
 import com.example.application.data.ContactRepository;
 import com.example.application.data.Property;
+import com.example.application.data.PropertyObject;
+import com.example.application.data.PropertyObjectRepository;
 import com.example.application.data.PropertyRepository;
 import com.example.application.data.Status;
 import com.example.application.data.StatusRepository;
@@ -23,14 +25,17 @@ public class CrmService {
   private final StatusRepository statusRepository;
   private final AddressRepository addressRepository;
   private final PropertyRepository propertyRepository;
+  private final PropertyObjectRepository objectRepository;
 
   public CrmService(CompanyRepository companyRepository, ContactRepository contactRepository,
-      StatusRepository statusRepository, AddressRepository addressRepository, PropertyRepository propertyRepository) {
+      StatusRepository statusRepository, AddressRepository addressRepository, PropertyRepository propertyRepository,
+      PropertyObjectRepository objectRepository) {
     this.companyRepository = companyRepository;
     this.contactRepository = contactRepository;
     this.statusRepository = statusRepository;
     this.addressRepository = addressRepository;
     this.propertyRepository = propertyRepository;
+    this.objectRepository = objectRepository;
   }
 
   public List<Contact> findAllContacts(String stringFilter) {
@@ -123,6 +128,18 @@ public class CrmService {
 
   public List<Address> findAllAddresss(String stringFilter) {
     return addressRepository.search(stringFilter);
+  }
+
+  public void saveObject(PropertyObject object) {
+    objectRepository.save(object);
+  }
+
+  public void deleteObject(PropertyObject object) {
+    objectRepository.delete(object);
+  }
+
+  public List<PropertyObject> findAllObjects(String stringFilter) {
+    return objectRepository.search(stringFilter);
   }
 
 }
